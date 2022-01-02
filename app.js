@@ -53,7 +53,7 @@ async function run() {
               }
            }
            else if(productName) {
-               products = await allProduct.find({name: {$regex: productName.toLowerCase()}}).toArray();
+               products = await allProduct.find({productName: {$regex: productName.toLowerCase()}}).toArray();
                if(products.length >= 1) {
                    res.send(products);
                }
