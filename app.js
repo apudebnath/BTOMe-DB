@@ -17,6 +17,7 @@ async function run() {
         await client.connect();
         const database = client.db("B2Me");
         const allProduct = database.collection("All_Product");
+        const allUsers = database.collection("All_Users");
 
         //All Get Api
         
@@ -29,27 +30,67 @@ async function run() {
         app.get('/all-products', async (req, res) => {
            const {category} = req.query;
            const {productId} = req.query;
-           const {productName} = req.query;
+           const {productName} = req.query;          
 
            let products;
 
             if(category) {
                 products = await allProduct.find({category: category}).toArray();
-                res.send(products);
+                if(products.length >= 1) {
+                    res.send(products);
+                }
+                else {
+                    res.status(404).json("Product Not Found")
+                }
            }
            else if(productId) {
-               products = await allProduct.find({_id: objectId(productId)});
-               res.send(products);
+              products = await allProduct.findOne({_id: objectId(productId)});
+              if(products === null) {
+                  res.status(404).json('Product Not Found');
+              }
+              else {
+                  res.send(products);
+              }
            }
            else if(productName) {
-               products = await allproduct.find({productName: productName}).toArray();
+               products = await allProduct.find({name: {$regex: productName.toLowerCase()}}).toArray();
+               if(products.length >= 1) {
+                   res.send(products);
+               }
+               else {
+                   res.status(404).json("Product Not Found")
+               }
            }
-           else if(category !== true && productId !== true && productName !== true) {
+           else if(category !== true && productId !== true && productName !== true) {            
                products = await allProduct.find({}).toArray();
                res.send(products);
            }
            
            
+        });
+
+        app.get('/all-users', async(req, res) => {
+            const users = await allUsers.find({}).toArray();
+            res.send(users);
+        });
+
+        //All Post Api
+
+        app.post('/create-new-user', async (req, res) => {
+            const user = {
+                name: "Sheikh Ariful Islam",
+                age: 17,
+            }
+
+            const result = await allUsers.insertOne(user);
+            res.send(result);
+        });
+
+        app.post('/add-product', async (req, res) => {
+           
+
+            res.end();
+            
         })
     }
     catch(error) {
