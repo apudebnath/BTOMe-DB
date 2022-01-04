@@ -119,7 +119,7 @@ async function run() {
             
         })
 
-        app.post('add-order', async (req, res) => {
+        app.post('/add-order', async (req, res) => {
             const order = req.body;
             const result = await allOrder.insertOne(order);
             res.send(result); 
