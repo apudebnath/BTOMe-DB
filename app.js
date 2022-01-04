@@ -21,7 +21,8 @@ async function run() {
 
         //All Get Api
         
-        app.get('/', async (req, res) => { 
+        app.get('/', async (req, res) => {           
+
             res.send("Well Come") 
         });
 
@@ -76,6 +77,16 @@ async function run() {
             const users = await allUsers.find({}).toArray();
             res.send(users);
         });
+
+        app.get('/chack-isAdmin', async(req, res) => {
+            const {email} = req.query;
+            const user = await allUser.findOne({email: email});
+            let isAdmin = false;
+            if(user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.status(200).json({isAdmin});
+        })
 
         //All Post Api
 
