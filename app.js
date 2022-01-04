@@ -18,6 +18,7 @@ async function run() {
         const database = client.db("B2Me");
         const allProduct = database.collection("All_Product");
         const allUsers = database.collection("All_Users");
+        const allOrder = database.collection("All_Order");
 
         //All Get Api
         
@@ -88,6 +89,21 @@ async function run() {
             res.status(200).json({isAdmin});
         })
 
+        app.get('/all-orders',async (req, res) =>{
+            const {userEmail} = req.query;
+
+            let result;
+
+            if(userEmail) {
+                result = await allOrder.find({email: userEmail}).toArray();
+                res.send(result);
+            }
+            else {
+                result = await allOrder.find({}).toArray();
+                res.send(result);
+            }
+        })
+
         //All Post Api
 
         app.post('/create-new-user', async (req, res) => {
@@ -102,6 +118,13 @@ async function run() {
             res.send(result);           
             
         })
+
+        app.post('add-order', async (req, res) => {
+            const order = req.body;
+            const result = await allOrder.insertOne(order);
+            res.send(result); 
+            
+        });
 
         //All Delete Request
 
